@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yachay Pukllay</title>
+    <!-- Incluir Tailwind CSS para un diseño responsivo y moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fuente Inter para un aspecto profesional -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; /* Evita el desplazamiento */
+        }
+
+        /* Animaciones compartidas */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-1px, -1px); }
+            20% { transform: translate(1px, 1px); }
+            30% { transform: translate(-1px, 1px); }
+            40% { transform: translate(1px, -1px); }
+            50% { transform: translate(-1px, -1px); }
+            60% { transform: translate(1px, 1px); }
+            70% { transform: translate(-1px, 1px); }
+            80% { transform: translate(1px, -1px); }
+            90% { transform: translate(-1px, -1px); }
+        }
+
+        @keyframes light-streak {
+            0% { transform: translateX(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100%); opacity: 0; }
+        }
+
+        @keyframes flash-text {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes menu-fade-in {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes title-pop-in {
+            0% { transform: scale(0.8); opacity: 0; }
+            70% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes button-slide-in {
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Pantalla de carga */
+        .loading-container {
+            background-color: #212121;
+            animation: shake 2s infinite ease-in-out;
+        }
+        .logo-canvas {
+            animation: pulse 2s infinite ease-in-out;
+        }
+        .light-streak {
+            position: absolute;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.7) 50%, rgba(255, 255, 255, 0) 100%);
+            height: 2px;
+            width: 80%;
+            animation: light-streak 3s infinite ease-out;
+            opacity: 0;
+        }
+        .light-streak:nth-child(1) { animation-delay: 0s; top: 20%; left: -40%; }
+        .light-streak:nth-child(2) { animation-delay: 1s; top: 40%; left: -40%; }
+        .light-streak:nth-child(3) { animation-delay: 2s; top: 60%; left: -40%; }
+        .light-streak:nth-child(4) { animation-delay: 0.5s; top: 80%; left: -40%; }
+        .light-streak:nth-child(5) { animation-delay: 1.5s; top: 10%; left: -40%; }
+        .loading-text {
+            animation: flash-text 1.5s infinite ease-in-out;
+        }
+        .loading-sub-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            position: absolute;
+            bottom: -50px;
+            white-space: nowrap;
+        }
+        .loading-sub-text.active {
+            opacity: 1;
+        }
+
+        /* Ventana de consentimiento */
+        .consent-modal {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        .consent-box {
+            background-color: #212121;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .consent-button {
+            background-color: #4CAF50;
+            transition: background-color 0.3s ease;
+        }
+        .consent-button:hover {
+            background-color: #45a049;
+        }
+
+        /* Menús (principal, configuración, perfil, premium, créditos, minijuegos, quiz, minigame-loading, minigame-info, word-weaver-game) */
+        .main-menu.active, .config-menu.active, .profile-menu.active, .premium-menu.active, .credits-menu.active, .minigames-menu.active, .quiz-game.active, .minigame-loading-screen.active, .minigame-info-screen.active, .word-weaver-game.active {
+            animation: menu-fade-in 0.8s ease-out forwards;
+        }
+        .main-menu h2, .config-menu h2, .profile-menu h2, .premium-menu h2, .credits-menu h2, .minigames-menu h2, .quiz-game h2, .minigame-loading-screen h2, .minigame-info-screen h2, .word-weaver-game h2 {
+            animation: title-pop-in 1s ease-out forwards;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5), 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+        .menu-button, .config-button, .profile-button, .premium-button, .credits-button, .minigame-button, .quiz-option-button, .quiz-nav-button, .info-button, .word-part-button, .word-weaver-control-button {
+            background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 9999px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, #8a2be2, #00bfff);
+            border-image-slice: 1;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            opacity: 0; /* Para animación escalonada */
+        }
+        .menu-button:hover, .config-button:hover, .profile-button:hover, .premium-button:hover, .credits-button:hover, .minigame-button:hover, .quiz-option-button:hover, .quiz-nav-button:hover, .info-button:hover, .word-part-button:hover, .word-weaver-control-button:hover {
+            background: linear-gradient(145deg, #4a4a4a, #3a3a3a);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.8);
+            border-image: linear-gradient(45deg, #9932CC, #1E90FF);
+            border-image-slice: 1;
+        }
+        .menu-button:active, .config-button:active, .profile-button:active, .premium-button:active, .credits-button:active, .minigame-button:active, .quiz-option-button:active, .quiz-nav-button:active, .info-button:active, .word-part-button:active, .word-weaver-control-button:active {
+            transform: translateY(0) scale(1);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+        }
+        .menu-button::after, .config-button::after, .profile-button::after, .premium-button::after, .credits-button::after, .minigame-button::after, .quiz-option-button::after, .quiz-nav-button::after, .info-button::after, .word-part-button::after, .word-weaver-control-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            transform: skewX(-30deg);
+            transition: all 0.7s ease;
+        }
+        .menu-button:hover::after, .config-button:hover::after, .profile-button:hover::after, .premium-button:hover::after, .credits-button:hover::after, .minigame-button:hover::after, .quiz-option-button:hover::after, .quiz-nav-button:hover::after, .info-button:hover::after, .word-part-button:hover::after, .word-weaver-control-button:hover::after {
+            left: 100%;
+        }
+
+        /* Botones de redes sociales */
+        .social-button-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 60;
+            opacity: 0;
+            animation: menu-fade-in 1s ease-out 1s forwards;
+        }
+        .social-button {
+            background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+            border-radius: 9999px;
+            padding: 0.75rem;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s ease, background 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .social-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+        }
+        .social-button svg {
+            width: 28px;
+            height: 28px;
+            fill: white;
+            transition: fill 0.3s ease;
+        }
+        .social-button.youtube:hover { background-color: #FF0000; }
+        .social-button.facebook:hover { background-color: #1877F2; }
+        .social-button.youtube:hover svg { fill: white; }
+        .social-button.facebook:hover svg { fill: white; }
+
+        /* Estilos para los controles de configuración y perfil */
+        .config-control-group, .profile-control-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            opacity: 0;
+        }
+
+        .config-control-group label, .profile-control-group label {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Estilos para el input range (volumen) */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 60%;
+            height: 8px;
+            background: #444;
+            border-radius: 5px;
+            outline: none;
+            transition: background 0.2s ease;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00bfff;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 191, 255, 0.7);
+            transition: background 0.2s ease, box-shadow 0.2s ease;
+        }
+        input[type="range"]:hover::-webkit-slider-thumb {
+            background: #1E90FF;
+            box-shadow: 0 0 8px rgba(0, 191, 255, 0.9);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00bfff;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 191, 255, 0.7);
+            transition: background 0.2s ease, box-shadow 0.2s ease;
+        }
+        input[type="range"]:hover::-moz-range-thumb {
+            background: #1E90FF;
+            box-shadow: 0 0 8px rgba(0, 191, 255, 0.9);
+        }
+
+        /* Estilos para el toggle switch (efectos) */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 28px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #4CAF50; }
+        input:focus + .slider { box-shadow: 0 0 1px #4CAF50; }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        /* Iconos SVG para los controles */
+        .config-icon, .profile-icon {
+            width: 24px;
+            height: 24px;
+            fill: #e0e0e0;
+        }
+
+        /* Estilos específicos para el perfil */
+        .profile-pic-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 3px solid #00bfff;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+            margin-bottom: 1rem;
+            flex-shrink: 0;
+        }
+
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-button {
+            background: linear-gradient(145deg, #00bfff, #007bff);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-size: 1rem;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            margin-top: 0.5rem;
+        }
+        .upload-button:hover {
+            background: linear-gradient(145deg, #1E90FF, #0056b3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .profile-name-input {
+            background-color: #333;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 250px;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .profile-name-input:focus {
+            border-color: #00bfff;
+            box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.3);
+        }
+
+        /* Estilos específicos para el menú Premium */
+        .premium-message {
+            max-width: 500px;
+            text-align: center;
+            font-size: 1.25rem; /* text-xl */
+            line-height: 1.5;
+            color: #e0e0e0;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            border-radius: 1rem;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            opacity: 0; /* Para animación escalonada */
+        }
+        /* Estilos específicos para el menú Créditos */
+        .credits-text {
+            max-width: 600px;
+            text-align: center;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #e0e0e0;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            border-radius: 1rem;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            opacity: 0; /* Para animación escalonada */
+        }
+        .credits-text p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Estilos para el Quiz Game y Word Weaver Game (compartidos) */
+        .quiz-container, .word-weaver-container {
+            max-width: 600px;
+            width: 100%;
+            background: linear-gradient(180deg, #1a1a1a, #0d0d0d);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .quiz-question, .word-weaver-spanish-word {
+            font-size: 1.75rem; /* text-3xl */
+            font-weight: 600;
+            color: #e0e0e0;
+            margin-bottom: 2rem;
+            min-height: 80px; /* Para evitar CLS al cambiar de pregunta */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quiz-options, .word-parts-container {
+            display: flex;
+            flex-wrap: wrap; /* Permite que los botones se envuelvan */
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-option-button, .word-part-button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1.125rem; /* text-lg */
+            transition: all 0.2s ease;
+        }
+
+        .quiz-feedback, .word-weaver-feedback {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600;
+            margin-top: -1rem;
+            margin-bottom: 1rem;
+            min-height: 30px; /* Para evitar CLS */
+        }
+
+        .quiz-feedback.correct, .word-weaver-feedback.correct {
+            color: #4CAF50; /* Verde */
+        }
+
+        .quiz-feedback.incorrect, .word-weaver-feedback.incorrect {
+            color: #FF6347; /* Rojo tomate */
+        }
+
+        .quiz-score, .word-weaver-score {
+            font-size: 2rem; /* text-4xl */
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        .quiz-score.grade-AD, .word-weaver-score.grade-AD { color: #00FF00; } /* Verde brillante */
+        .quiz-score.grade-A, .word-weaver-score.grade-A { color: #00BFFF; } /* Azul cielo */
+        .quiz-score.grade-B, .word-weaver-score.grade-B { color: #FFD700; } /* Oro */
+        .quiz-score.grade-C, .word-weaver-score.grade-C { color: #FF4500; } /* Naranja rojizo */
+
+
+        .quiz-nav-button, .word-weaver-control-button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1.125rem; /* text-lg */
+            opacity: 0; /* Para animación escalonada */
+        }
+
+        /* Estilos específicos para el Tejedor de Palabras */
+        .woven-word-display {
+            background-color: #333;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 0.5rem;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: #00bfff; /* Azul para la palabra formada */
+            font-weight: bold;
+            text-align: center;
+            word-break: break-all; /* Evita desbordamiento con palabras largas */
+        }
+        .word-part-button {
+            opacity: 1; /* Los botones de sílabas están visibles por defecto */
+            animation: none; /* No animar con button-slide-in inicialmente */
+            margin: 0.25rem; /* Espacio entre las partes */
+        }
+        .word-part-button.selected {
+            background: linear-gradient(145deg, #1a1a1a, #0d0d0d); /* Más oscuro cuando seleccionado */
+            border-image: none;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+            cursor: default;
+        }
+        .word-part-button.selected::after {
+            left: -100%; /* Desactiva el brillo en el seleccionado */
+        }
+        .word-part-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 flex items-center justify-center min-h-screen">
+
+    <!-- Ventana de Consentimiento de Sonido -->
+    <div id="consent-modal" class="consent-modal fixed inset-0 flex items-center justify-center z-[100] transition-opacity duration-300">
+        <div class="consent-box p-8 rounded-lg shadow-xl text-center max-w-sm mx-4">
+            <p class="text-white text-xl mb-6">¿Permitir que el juego reproduzca sonidos?</p>
+            <button id="allow-sound-button" class="consent-button text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:shadow-outline">
+                Permitir
+            </button>
+        </div>
+    </div>
+
+    <!-- Pantalla de Carga -->
+    <div id="loading-screen" class="loading-container fixed inset-0 flex flex-col items-center justify-center z-50 transition-opacity duration-1000 hidden">
+        <!-- Rayas de luz de fondo (permanecen fijas en el viewport) -->
+        <div class="light-streak"></div>
+        <div class="light-streak"></div>
+        <div class="light-streak"></div>
+        <div class="light-streak"></div>
+        <div class="light-streak"></div>
+
+        <!-- Contenedor principal del logo, espectro y texto, con desplazamiento hacia abajo -->
+        <div id="main-loading-content" class="relative flex flex-col items-center justify-center" style="transform: translateY(20px);">
+            <!-- Canvas para el espectro de música -->
+            <!-- Posicionado absolutamente para superponerse al logo -->
+            <canvas id="spectrumCanvas" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></canvas>
+
+            <!-- Canvas para el logo con efecto de carga -->
+            <canvas id="logoCanvas" class="logo-canvas w-48 h-48 md:w-64 md:h-64 rounded-full shadow-lg bg-white p-4 relative z-10"></canvas>
+
+            <!-- Contenedor para el texto de carga y los subtextos -->
+            <div class="relative mt-8 flex flex-col items-center justify-center">
+                <p id="loading-text" class="loading-text text-white text-2xl md:text-3xl font-semibold">Cargando... <span id="loading-percentage">0%</span></p>
+                <!-- Nuevos textos de carga -->
+                <p id="loading-textures-text" class="loading-sub-text">Cargando texturas...</p>
+                <p id="loading-sounds-text" class="loading-sub-text">Cargando sonidos correctamente...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menú Principal (inicialmente oculto) -->
+    <div id="main-menu" class="main-menu hidden fixed inset-0 flex flex-col items-center justify-center text-white p-4" style="background: linear-gradient(180deg, #1a1a1a, #0d0d0d);">
+        <!-- Rayas de luz para el menú principal -->
+        <div class="light-streak menu-streak" style="animation-delay: 0.8s; top: 15%; left: -40%;"></div>
+        <div class="light-streak menu-streak" style="animation-delay: 1.3s; top: 35%; left: -40%;"></div>
+        <div class="light-streak menu-streak" style="animation-delay: 1.8s; top: 55%; left: -40%;"></div>
+        <div class="light-streak menu-streak" style="animation-delay: 2.3s; top: 75%; left: -40%;"></div>
+        <div class="light-streak menu-streak" style="animation-delay: 2.8s; top: 95%; left: -40%;"></div>
+
+        <h2 class="text-5xl md:text-6xl font-bold mb-12 text-center text-white drop-shadow-lg">Yachay Pukllay</h2>
+        <div class="flex flex-col space-y-4 w-full items-center">
+            <button class="menu-button" id="play-button" style="animation-delay: 0.1s;">Jugar</button>
+            <button class="menu-button" id="profile-button" style="animation-delay: 0.2s;">Perfil</button>
+            <button class="menu-button" id="config-button" style="animation-delay: 0.3s;">Configuración</button>
+            <button class="menu-button" id="premium-button" style="animation-delay: 0.4s;">Mejorar a Premium</button>
+            <button class="menu-button" id="credits-button" style="animation-delay: 0.5s;">Créditos</button>
+            <button class="menu-button" id="exit-button" style="animation-delay: 0.6s;">Salir</button>
+        </div>
+
+        <!-- Contenedor de botones de redes sociales -->
+        <div class="social-button-container">
+            <a id="youtube-button" href="https://www.youtube.com/example" target="_blank" class="social-button youtube">
+                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21.543 6.498c-.235-1.096-.94-1.99-2.036-2.226C17.496 4 12 4 12 4s-5.496 0-7.507.272c-1.096.236-1.801 1.13-2.036 2.226C2 8.498 2 12 2 12s0 3.502.272 5.502c.235 1.096.94 1.99 2.036 2.226C6.504 20 12 20 12 20s5.496 0 7.507-.272c1.096-.236 1.801-1.13 2.036-2.226C22 15.502 22 12 22 12s0-3.502-.457-5.502zM9.545 15.592V8.408L15.818 12l-6.273 3.592z"/>
+                </svg>
+            </a>
+            <a id="facebook-button" href="https://www.facebook.com/example" target="_blank" class="social-button facebook">
+                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 13.5h2.5l1-4H14V6.5c0-.97.312-1.637 1.763-1.637H18V.992C17.65.952 16.591.905 15.357.905c-2.34 0-3.894 1.428-3.894 4.075V9.5H8v4h3.463V23h4.075V13.5z"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- Menú de Configuración (inicialmente oculto) -->
+    <div id="config-menu" class="config-menu hidden fixed inset-0 flex flex-col items-center justify-center text-white p-4" style="background: linear-gradient(180deg, #1a1a1a, #0d0d0d);">
+        <!-- Rayas de luz para el menú de configuración -->
+        <div class="light-streak config-streak" style="animation-delay: 0.8s; top: 15%; left: -40%;"></div>
+        <div class="light-streak config-streak" style="animation-delay: 1.3s; top: 35%; left: -40%;"></div>
+        <div class="light-streak config-streak" style="animation-delay: 1.8s; top: 55%; left: -40%;"></div>
+        <div class="light-streak config-streak" style="animation-delay: 2.3s; top: 75%; left: -40%;"></div>
+        <div class="light-streak config-streak" style="animation-delay: 2.8s; top: 95%; left: -40%;"></div>
+
+        <h2 class="text-5xl md:text-6xl font-bold mb-12 text-center text-white drop-shadow-lg">Configuración</h2>
+
+        <div class="flex flex-col space-y-6 w-full items-center">
+            <!-- Control de Volumen -->
+            <div class="config-control-group" style="animation-delay: 0.1s;">
+                <label for="volume-slider">
+                    <svg class="config-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 10v4c0 .55.45 1 1 1h3l3.29 3.29c.63.63 1.71.18 1.71-.71V6.41c0-.89-1.08-1.34-1.71-.71L7 9H4c-.55 0-1 .45-1 1zm13.5 2c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.98 7-4.99 7-8.77s-2.99-7.79-7-8.77z"/>
+                    </svg>
+                    Sonidos
+                </label>
+                <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5">
+            </div>
+
+            <!-- Control de Efectos -->
+            <div class="config-control-group" style="animation-delay: 0.2s;">
+                <label for="effects-toggle">
+                    <svg class="config-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19.79 5.61a.996.996 0 0 0-1.41 0L12 11.98 5.61 5.61a.996.996 0 1 0-1.41 1.41L10.59 13.4l-6.39 6.39a.996.996 0 1 0 1.41 1.41L12 14.81l6.39 6.39a.996.996 0 1 0 1.41-1.41L13.41 13.4l6.39-6.39a.996.996 0 0 0 0-1.4zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                    </svg>
+                    Efectos
+                </label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="effects-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Botón Volver -->
+            <button class="config-button" id="back-to-main-from-config" style="animation-delay: 0.3s;">Volver al Menú</button>
+        </div>
+    </div>
+
+    <!-- Menú de Perfil (inicialmente oculto) -->
+    <div id="profile-menu" class="profile-menu hidden fixed inset-0 flex flex-col items-center justify-center text-white p-4" style="background: linear-gradient(180deg, #1a1a1a, #0d0d0d);">
+        <!-- Rayas de luz para el menú de perfil -->
+        <div class="light-streak profile-streak" style="animation-delay: 0.8s; top: 15%; left: -40%;"></div>
+        <div class="light-streak profile-streak" style="animation-delay: 1.3s; top: 35%; left: -40%;"></div>
+        <div class="light-streak profile-streak" style="animation-delay: 1.8s; top: 55%; left: -40%;"></div>
+        <div class="light-streak profile-streak" style="animation-delay: 2.3s; top: 75%; left: -40%;"></div>
+        <div class="light-streak profile-streak" style="animation-delay: 2.8s; top: 95%; left: -40%;"></div>
+
+        <h2 class="text-5xl md:text-6xl font-bold mb-12 text-center text-white drop-shadow-lg">Perfil</h2>
+
+        <div class="flex flex-col space-y-6 w-full items-center">
+            <!-- Foto de Perfil -->
+            <div class="profile-control-group flex-col" style="animation-delay: 0.1s;">
+                <label class="mb-4">
+                    <svg class="profile-icon mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    Foto de Perfil
+                </label>
+                <div class="profile-pic-container">
+                    <img id="profile-pic" src="https://placehold.co/120x120/444444/FFFFFF?text=Tu+Foto" alt="Foto de Perfil" class="profile-pic">
+                </div>
+                <input type="file" id="profile-image-input" accept="image/*" class="hidden">
+                <button class="upload-button" id="upload-image-button">Subir Imagen</button>
+            </div>
+
+            <!-- Cambiar Nombre -->
+            <div class="profile-control-group" style="animation-delay: 0.2s;">
+                <label for="profile-name-input">
+                    <svg class="profile-icon mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 4c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 10c2.67 0 8 1.34 8 4v2h16v-2c0-2.66-5.33-4-8-4zm0-12c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    Nombre
+                </label>
+                <input type="text" id="profile-name-input" maxlength="15" placeholder="Tu nombre" class="profile-name-input">
+            </div>
+
+            <!-- Botón Volver -->
+            <button class="profile-button" id="back-to-main-from-profile" style="animation-delay: 0.3s;">Volver al Menú</button>
+        </div>
+    </div>
+
+    <!-- Menú Mejorar a Premium (inicialmente oculto) -->
+    <div id="premium-menu" class="premium-menu hidden fixed inset-0 flex flex-col items-center justify-center text-white p-4" style="background: linear-gradient(180deg, #1a1a1a, #0d0d0d);">
+        <!-- Rayas de luz para el menú premium -->
+        <div class="light-streak premium-streak" style="animation-delay: 0.8s; top: 15%; left: -40%;"></div>
+        <div class="light-streak premium-streak" style="animation-delay: 1.3s; top: 35%; left: -40%;"></div>
+        <div class="light-streak premium-streak" style="animation-delay: 1.8s; top: 55%; left: -40%;"></div>
+        <div class="light-streak premium-streak" style="animation-delay: 2.3s; top: 75%; left: -40%;"></div>
+        <div class="light-streak premium-streak" style="animation-delay: 2.8s; top: 95%; left: -40%;"></div>
+
+        <h2 class="text-5xl md:text-6xl font-bold mb-12 text-center text-white drop-shadow-lg">Mejorar a Premium</h2>
+
+        <div class="flex flex-col space-y-6 w-full items-center">
+            <p class="premium-message" style="animation-delay: 0.1s;">
+                Aún estamos trabajando por la versión de paga, la cual contendrá minijuegos exclusivos y funciones exclusivas. ¡Mantente atento!
+            </p>
+            <!-- Botón Volver -->
+            <button class="premium-button" id="back-to-main-from-premium" style="animation-delay: 0.2s;">Volver al Menú</button>
+        </div>
+    </div>
+
+    <!-- Menú de Créditos (inicialmente oculto) -->
+    <div id="credits-menu" class="credits-menu hidden fixed inset-0 flex flex-col items-center justify-center text-white p-4" style="background: linear-gradient(180deg, #1a1a1a, #0d0d0d);">
+        <!-- Rayas de luz para el menú créditos -->
+        <div class="light-streak credits-streak" style="animation-delay: 0.8s; top: 15%; left: -40%;"></div>
+        <div class="light-streak credits-streak" style="animation-delay: 1.3s; top: 35%; left: -40%;"></div>
+        <div class="light-streak credits-streak" style="animation-delay: 1.8s; top: 55%; left: -40%;"></div>
+        <div class="light-streak credits-streak" style="animation-delay: 2.3s; top: 75%; left: -40%;"></div>
+        <div class="light-streak credits-streak" style="animation-delay: 2.8s; top: 95%; left: -40%;"></div>
+
+        <h2 class="text-5xl md:text-6xl font-bold mb-12 text-center text-white drop-shadow-lg">Créditos</h2>
+
+        <div class="flex flex-col space-y-6 w-full items-center">
+            <div class="credits-text" style="animation-delay: 0.1s;">
+                <p>Este es un proyecto escolar que aún está en fase beta, osea es un prototipo, seguiré mejorando el juego ....</p>
+                <p><strong>Creador:</strong> YO</p>
+                <p><strong>Nombre De La Empresa:</strong> Yachay Perú</p>
+                <p><strong>Desarrollador Principal:</strong> YanPool Inofuente Condori 5to G</p>
+                <p>Sufrí en los códigos HTML para hacerlo en navegador y sea accesible en todas las plataformas XD</p>
+                <p>¡Gracias por jugar mi juego Insano!</p>
+            </div>
+            <!-- Botón Volver -->
+            <button class="credits-button" id="back-to-main-from-credits" style="animation-delay: 0.2s;">Volver al Menú</button>
+        </div>
+    </div>
+
+    <!-- Menú de Minijuegos (inicialmente oculto) -->
+    <div id="minigames-menu" class="minigames-menu hidden fixed inset-0 flex flex-col items-center justify-center text-white p-4" style="background: linear-gradient(180deg, #1a1a1a, #0d0d0d);">
+        <!-- Rayas de luz para el menú de minijuegos -->
+        <div class="light-streak minigames-streak" style="animation-delay: 0.8s; top: 15%; left: -40%;"></div>
+        <div class="light-streak minigames-streak" style="animation-delay: 1.3s; top: 35%; left: -40%;"></div>
+        <div class="light-streak minigames-streak" style="animation-delay: 1.8s; top: 55%; left: -40%;"></div>
+        <div class="light-streak minigames-streak" style="animation-delay: 2.3s; top: 75%; left: -40%;"></div>
+        <div class="light-streak minigames-streak" style="animation-delay: 2.8s; top: 95%; left: -40%;"></div>
+
+        <h2 class="text-5xl md:text-6xl font-bold mb-12 text-center text-white drop-shadow-lg">Minijuegos</h2>
+        <div class="flex flex-col space-y-4 w-full items-center">
+            <button class="minigame-button" id="start-quiz-button" style="animation-delay: 0.1s;">Responder preguntas</button>
+            <button class="minigame-button" id="start-word-weaver-button" style="animation-delay: 0.2s;">El Tejedor de Palabras</button>
+            <button class="minigame-button" id="back-to-main-from-minigames" style="animation-delay: 0.3s;">Volver al Menú Principal</button>
+        </div>
+    </div>
+
+    <!-- Pantalla de Carga del Minijuego (inicialmente oculto) -->
+    <div id="minigame-loading-screen" class="minigame-loading-screen hidden fixed inset-0 z-50">
+        <!-- Rayas de luz para la pantalla de carga del minijuego -->
+        <div class="light-streak" style="animation-delay: 0.8s; top: 15%; left: -40%;"></div>
+        <div class="light-streak" style="animation-delay: 1.3s; top: 35%; left: -40%;"></div>
+        <div class="light-streak" style="animation-delay: 1.8s; top: 55%; left: -40%;"></div>
+        <div class="light-streak" style="animation-delay: 2.3s; top: 75%; left: -40%;"></div>
+        <div class="light-streak" style="animation-delay: 2.8s; top: 95%; left: -40%;"></div>
+
+        <div class="content-wrapper">
+            <h2 class="text-5xl md:text-6xl font-bold mb-8 text-center text-white drop-shadow-lg" id="minigame-loading-title"></h2>
+            <div class="loading-spinner"></div>
+            <p class="text-xl mt-8 max-w-md" id="minigame-loading-tip"></p>
+        </div>
+    </div>
+
+    <!-- Pantalla de Información del Minijuego (inicialmente oculto) -->
+    <div id="minigame-info-screen" class="minigame-info-screen hidden fixed inset-0 z-50">
+        <!-- Rayas de luz para la pantalla de información del minijuego -->
+        <div class="light-streak" style="animation-delay: 0.8s; top: 15%; left: -40%;"></div>
+        <div class="light-streak" style="animation-delay: 1.3s; top: 35%; left: -40%;"></div>
+        <div class="light-streak" style="animation-delay: 1.8s; top: 55%; left: -40%;"></div>
+        <div class="light-streak" style="animation-delay: 2.3s; top: 75%; left: -40%;"></div>
+        <div class="light-streak" style="animation-delay: 2.8s; top: 95%; left: -40%;"></div>
+
+        <div class="content-wrapper">
+            <h2 class="text-5xl md:text-6xl font-bold mb-8 text-center text-white drop-shadow-lg" id="minigame-info-title"></h2>
+            <div class="flex flex-col space-y-6 w-full items-center max-w-xl">
+                <p class="info-description" style="animation-delay: 0.1s;"><strong>De qué trata el juego:</strong> <span id="info-description-text"></span></p>
+                <p class="info-objective" style="animation-delay: 0.2s;"><strong>Objetivo:</strong> <span id="info-objective-text"></span></p>
+                <button class="info-button" id="start-game-from-info" style="animation-delay: 0.3s;">¡Jugar!</button>
+                <button class="info-button" id="back-to-minigames-from-info" style="animation-delay: 0.4s;">Volver a Minijuegos</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Minijuego "Responder preguntas" (Quiz Game) (inicialmente oculto) -->
+    <div id="quiz-game" class="quiz-game hidden fixed inset-0 flex flex-col items-center justify-center text-white p-4" style="background: linear-gradient(180deg, #1a1a1a, #0d0d0d);">
+        <!-- Rayas de luz para el quiz game -->
+        <div class="light-streak quiz-streak" style="animation-delay: 0.8s; top: 15%; left: -40%;"></div>
+        <div class="light-streak quiz-streak" style="animation-delay: 1.3s; top: 35%; left: -40%;"></div>
+        <div class="light-streak quiz-streak" style="animation-delay: 1.8s; top: 55%; left: -40%;"></div>
+        <div class="light-streak quiz-streak" style="animation-delay: 2.3s; top: 75%; left: -40%;"></div>
+        <div class="light-streak quiz-streak" style="animation-delay: 2.8s; top: 95%; left: -40%;"></div>
+
+        <h2 class="text-5xl md:text-6xl font-bold mb-12 text-center text-white drop-shadow-lg">Responder preguntas</h2>
+
+        <div class="quiz-container flex flex-col items-center justify-center">
+            <p id="quiz-question" class="quiz-question"></p>
+            <div id="quiz-options" class="quiz-options w-full">
+                <!-- Opciones de respuesta se insertarán aquí por JS -->
+            </div>
+            <p id="quiz-feedback" class="quiz-feedback"></p>
+            <button id="quiz-next-button" class="quiz-nav-button">Siguiente Pregunta</button>
+            <p id="quiz-score-display" class="quiz-score hidden"></p>
+            <button id="quiz-restart-button" class="quiz-nav-button hidden">Jugar de nuevo</button>
+            <button class="quiz-nav-button" id="back-to-minigames-from-quiz">Volver a Minijuegos</button>
+        </div>
+    </div>
+
+    <!-- Nuevo Minijuego "El Tejedor de Palabras" (inicialmente oculto) -->
+    <div id="word-weaver-game" class="word-weaver-game hidden fixed inset-0 flex flex-col items-center justify-center text-white p-4" style="background: linear-gradient(180deg, #1a1a1a, #0d0d0d);">
+        <!-- Rayas de luz para el tejedor de palabras -->
+        <div class="light-streak weaver-streak" style="animation-delay: 0.8s; top: 15%; left: -40%;"></div>
+        <div class="light-streak weaver-streak" style="animation-delay: 1.3s; top: 35%; left: -40%;"></div>
+        <div class="light-streak weaver-streak" style="animation-delay: 1.8s; top: 55%; left: -40%;"></div>
+        <div class="light-streak weaver-streak" style="animation-delay: 2.3s; top: 75%; left: -40%;"></div>
+        <div class="light-streak weaver-streak" style="animation-delay: 2.8s; top: 95%; left: -40%;"></div>
+
+        <h2 class="text-5xl md:text-6xl font-bold mb-12 text-center text-white drop-shadow-lg">El Tejedor de Palabras</h2>
+
+        <div class="word-weaver-container flex flex-col items-center justify-center">
+            <p id="word-weaver-spanish-word" class="word-weaver-spanish-word"></p>
+            <div id="woven-word-display" class="woven-word-display w-full max-w-sm mb-4"></div>
+            <div id="word-parts-container" class="word-parts-container w-full">
+                <!-- Partes de la palabra se insertarán aquí por JS -->
+            </div>
+            <p id="word-weaver-feedback" class="word-weaver-feedback"></p>
+            <div class="flex flex-wrap justify-center gap-4 mt-4 w-full max-w-sm">
+                <button id="word-weaver-clear-button" class="word-weaver-control-button flex-1">Limpiar</button>
+                <button id="word-weaver-check-button" class="word-weaver-control-button flex-1">Comprobar</button>
+            </div>
+            <button id="word-weaver-next-button" class="word-weaver-control-button hidden">Siguiente Palabra</button>
+            <p id="word-weaver-score-display" class="word-weaver-score hidden"></p>
+            <button id="word-weaver-restart-button" class="word-weaver-control-button hidden">Jugar de nuevo</button>
+            <button class="word-weaver-control-button" id="back-to-minigames-from-weaver">Volver a Minijuegos</button>
+        </div>
+    </div>
+
+
+    <!-- Elemento de Audio para la pantalla de carga -->
+    <audio id="background-music" src="https://raw.githubusercontent.com/Cookies7w7/Musicas/main/Full%20Force%20men%C3%BA%20de%20carga_1_1_1.mp3" loop></audio>
+
+    <!-- Elemento de Audio para el menú principal -->
+    <audio id="menu-music" src="https://raw.githubusercontent.com/Cookies7w7/Musicas/main/SCP_%20Secret%20Laboratory%20OST%20_%20Main%20Menu%20Intense(MP3_160K).mp3" loop></audio>
+
+    <!-- Nuevo Elemento de Audio para la música de minijuegos (carga/info) -->
+    <audio id="minigame-briefing-music" src="https://raw.githubusercontent.com/Cookies7w7/Musicas/main/ROBLOX%20-%20Entry%20Point%20Soundtrack_%20Mission%20Briefing%20%28Heist%20-%20Bruton%29%28MP3_160K%29.mp3" loop></audio>
+
+    <!-- Nuevo Elemento de Audio para la música del Quiz Game -->
+    <audio id="quiz-game-music" src="https://raw.githubusercontent.com/Cookies7w7/Musicas/main/ROBLOX%20-%20Entry%20Point%20Soundtrack_%20The%20Withdrawal%20Stealth%20%28Aftermath%20-%20Nightingale%20Music%29%28MP3_160K%29.mp3" loop></audio>
+
+    <!-- Nuevo Elemento de Audio para la música del Tejedor de Palabras -->
+    <audio id="word-weaver-game-music" src="https://raw.githubusercontent.com/Cookies7w7/Musicas/main/ROBLOX_%20Entry%20Point%20Soundtrack_%20The%20SCRS%20Stealth%20%28Unusual%20Suspect%20-%20Kaptain%29%28MP3_160K%29.mp3" loop></audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const consentModal = document.getElementById('consent-modal');
+            const allowSoundButton = document.getElementById('allow-sound-button');
+            const loadingScreen = document.getElementById('loading-screen');
+            const loadingPercentage = document.getElementById('loading-percentage');
+            const logoCanvas = document.getElementById('logoCanvas');
+            const logoCtx = logoCanvas.getContext('2d');
+            const spectrumCanvas = document.getElementById('spectrumCanvas');
+            const ctx = spectrumCanvas.getContext('2d');
+            const backgroundMusic = document.getElementById('background-music'); // Música de carga
+            const menuMusic = document.getElementById('menu-music'); // Música del menú
+            const minigameBriefingMusic = document.getElementById('minigame-briefing-music'); // Música de carga/info de minijuegos
+            const quizGameMusic = document.getElementById('quiz-game-music'); // Música del Quiz Game
+            const wordWeaverGameMusic = document.getElementById('word-weaver-game-music'); // Música del Tejedor de Palabras
+
+            const loadingTexturesText = document.getElementById('loading-textures-text');
+            const loadingSoundsText = document.getElementById('loading-sounds-text');
+
+            const mainMenu = document.getElementById('main-menu');
+            const configMenu = document.getElementById('config-menu');
+            const profileMenu = document.getElementById('profile-menu');
+            const premiumMenu = document.getElementById('premium-menu');
+            const creditsMenu = document.getElementById('credits-menu');
+            const minigamesMenu = document.getElementById('minigames-menu');
+            const quizGame = document.getElementById('quiz-game');
+            const minigameLoadingScreen = document.getElementById('minigame-loading-screen');
+            const minigameInfoScreen = document.getElementById('minigame-info-screen');
+            const wordWeaverGame = document.getElementById('word-weaver-game');
+
+            const playButton = document.getElementById('play-button');
+            const profileButton = document.getElementById('profile-button');
+            const configButton = document.getElementById('config-button');
+            const premiumButton = document.getElementById('premium-button');
+            const creditsButton = document.getElementById('credits-button');
+            const exitButton = document.getElementById('exit-button');
+
+            const backToMainFromConfigButton = document.getElementById('back-to-main-from-config');
+            const backToMainFromProfileButton = document.getElementById('back-to-main-from-profile');
+            const backToMainFromPremiumButton = document.getElementById('back-to-main-from-premium');
+            const backToMainFromCreditsButton = document.getElementById('back-to-main-from-credits');
+            const backToMainFromMinigamesButton = document.getElementById('back-to-main-from-minigames');
+            const startQuizButton = document.getElementById('start-quiz-button');
+            const startWordWeaverButton = document.getElementById('start-word-weaver-button');
+            const backToMinigamesFromQuizButton = document.getElementById('back-to-minigames-from-quiz');
+            const backToMinigamesFromWordWeaverButton = document.getElementById('back-to-minigames-from-weaver');
+            const startGameFromInfoButton = document.getElementById('start-game-from-info');
+            const backToMinigamesFromInfoButton = document.getElementById('back-to-minigames-from-info');
+
+            const volumeSlider = document.getElementById('volume-slider');
+            const effectsToggle = document.getElementById('effects-toggle');
+
+            const profilePic = document.getElementById('profile-pic');
+            const profileImageInput = document.getElementById('profile-image-input');
+            const uploadImageButton = document.getElementById('upload-image-button');
+            const profileNameInput = document.getElementById('profile-name-input');
+
+            const youtubeButton = document.getElementById('youtube-button');
+            const facebookButton = document.getElementById('facebook-button');
+
+            // Elementos del Quiz Game
+            const quizQuestionElement = document.getElementById('quiz-question');
+            const quizOptionsElement = document.getElementById('quiz-options');
+            const quizFeedbackElement = document.getElementById('quiz-feedback');
+            const quizNextButton = document.getElementById('quiz-next-button');
+            const quizScoreDisplay = document.getElementById('quiz-score-display');
+            const quizRestartButton = document.getElementById('quiz-restart-button');
+
+            // Elementos del Word Weaver Game
+            const wordWeaverSpanishWord = document.getElementById('word-weaver-spanish-word');
+            const wordPartsContainer = document.getElementById('word-parts-container');
+            const wovenWordDisplay = document.getElementById('woven-word-display');
+            const wordWeaverFeedback = document.getElementById('word-weaver-feedback');
+            const wordWeaverClearButton = document.getElementById('word-weaver-clear-button');
+            const wordWeaverCheckButton = document.getElementById('word-weaver-check-button');
+            const wordWeaverNextButton = document.getElementById('word-weaver-next-button');
+            const wordWeaverScoreDisplay = document.getElementById('word-weaver-score-display');
+            const wordWeaverRestartButton = document.getElementById('word-weaver-restart-button');
+
+
+            // Elementos de la pantalla de carga/info del minijuego
+            const minigameLoadingTitle = document.getElementById('minigame-loading-title');
+            const minigameLoadingTip = document.getElementById('minigame-loading-tip');
+            const minigameInfoTitle = document.getElementById('minigame-info-title');
+            const infoDescriptionText = document.getElementById('info-description-text');
+            const infoObjectiveText = document.getElementById('info-objective-text');
+
+
+            const logoImage = new Image();
+            logoImage.src = "https://raw.githubusercontent.com/Cookies7w7/Musicas/main/52%20sin%20t%C3%ADtulo.png";
+
+            let progress = 0;
+            // Initial loading screen duration set to 15 seconds
+            const initialLoadingDuration = 15000; // 15 segundos en milisegundos
+            // Minigame loading screen duration set to 8 seconds
+            const minigameLoadingDuration = 8000; // 8 segundos en milisegundos
+
+            const totalSteps = 100;
+            // This intervalTime will be used for the initial loading screen
+            const initialIntervalTime = initialLoadingDuration / totalSteps; 
+
+            const barCount = 60;
+            let audioData = new Uint8Array(barCount);
+            const spectrumMargin = 20;
+            const maxBarHeight = 60;
+
+            let logoRadius = 0;
+            let effectsEnabled = true;
+
+            // --- Variables y Preguntas del Quiz Game ---
+            let currentQuestionIndex = 0;
+            let score = 0;
+            let quizQuestions = [
+                {
+                    question: "¿Cómo se dice 'hola' en Quechua?",
+                    options: ["Allillanchu", "Kamisaraki", "Imaynalla", "Napaykullayki"],
+                    correctAnswerIndex: 0,
+                    explanation: "Allillanchu significa '¿Estás bien?' y se usa como saludo general."
+                },
+                {
+                    question: "¿Cuál es la palabra Aymara para 'agua'?",
+                    options: ["Yaku", "Uma", "Qucha", "Mayu"],
+                    correctAnswerIndex: 1,
+                    explanation: "Uma es la palabra Aymara para 'agua'."
+                },
+                {
+                    question: "En Quechua, ¿qué significa 'Inti'?",
+                    options: ["Luna", "Estrella", "Sol", "Tierra"],
+                    correctAnswerIndex: 2,
+                    explanation: "Inti es el dios Sol en la mitología Inca."
+                },
+                {
+                    question: "¿Cómo se dice 'gracias' en Aymara?",
+                    options: ["Pachi", "Sulpayki", "Yupaychayki", "Ancha sumaq"],
+                    correctAnswerIndex: 0,
+                    explanation: "Pachi es la forma común de decir 'gracias' en Aymara."
+                },
+                {
+                    question: "En Quechua, 'Mama Quilla' se refiere a:",
+                    options: ["Madre Tierra", "Madre Luna", "Madre Agua", "Madre Sol"],
+                    correctAnswerIndex: 1,
+                    explanation: "Mama Quilla es la diosa Luna en la mitología Inca."
+                },
+                {
+                    question: "¿Cómo se dice 'buenos días' en Quechua?",
+                    options: ["Tuta", "Allin p'unchaw", "Paqariy", "Qhali p'unchaw"],
+                    correctAnswerIndex: 1,
+                    explanation: "Allin p'unchaw es el saludo para 'buenos días' en Quechua."
+                },
+                {
+                    question: "¿Qué significa 'Wawa' en Quechua?",
+                    options: ["Anciano", "Joven", "Bebé / Niño", "Adulto"],
+                    correctAnswerIndex: 2,
+                    explanation: "Wawa se refiere a un bebé o niño pequeño."
+                },
+                {
+                    question: "¿Cómo se dice 'casa' en Aymara?",
+                    options: ["Wasi", "Uta", "Chakra", "Kancha"],
+                    correctAnswerIndex: 1,
+                    explanation: "Uta es la palabra Aymara para 'casa'."
+                },
+                {
+                    question: "¿Qué animal es 'Kuntur' en Quechua?",
+                    options: ["Llama", "Alpaca", "Cóndor", "Puma"],
+                    correctAnswerIndex: 2,
+                    explanation: "El Kuntur es el majestuoso Cóndor andino."
+                },
+                {
+                    question: "¿Cuál es la palabra Aymara para 'sol'?",
+                    options: ["Phaxsi", "Qhana", "Willka", "Ch'aska"],
+                    correctAnswerIndex: 2,
+                    explanation: "Willka es la palabra Aymara para 'sol'."
+                },
+                {
+                    question: "¿Cómo se dice 'adiós' en Quechua?",
+                    options: ["Rimaykullayki", "Tupananchiskama", "Kawsachun", "Yanapay"],
+                    correctAnswerIndex: 1,
+                    explanation: "Tupananchiskama significa 'hasta que nos volvamos a encontrar'."
+                },
+                {
+                    question: "¿Qué significa 'Jallalla' en Aymara?",
+                    options: ["Adiós", "Gracias", "¡Viva! / ¡Salud!", "Por favor"],
+                    correctAnswerIndex: 2,
+                    explanation: "Jallalla es una expresión de júbilo y deseo de prosperidad."
+                },
+                {
+                    question: "¿Cómo se dice 'montaña' en Quechua?",
+                    options: ["Qucha", "Mayu", "Urqu", "Pampa"],
+                    correctAnswerIndex: 2,
+                    explanation: "Urqu es la palabra Quechua para 'montaña'."
+                },
+                {
+                    question: "¿Cuál es la palabra Aymara para 'tierra' (como territorio o lugar)?",
+                    options: ["Allpa", "Marka", "Sallqa", "Pirqa"],
+                    correctAnswerIndex: 1,
+                    explanation: "Marka puede referirse a tierra, pueblo o región en Aymara."
+                },
+                {
+                    question: "¿Qué significa 'Qhapaq' en Quechua?",
+                    options: ["Pequeño", "Débil", "Poderoso / Grande", "Rápido"],
+                    correctAnswerIndex: 2,
+                    explanation: "Qhapaq denota grandeza, poder o nobleza."
+                },
+                {
+                    question: "¿Cómo se dice 'corazón' en Aymara?",
+                    options: ["Sunqu", "Llawar", "Nayra", "Jinchu"],
+                    correctAnswerIndex: 1,
+                    explanation: "Llawar es la palabra Aymara para 'corazón'."
+                },
+                {
+                    question: "¿Qué es 'Chakana' en la cultura Andina?",
+                    options: ["Un tipo de danza", "Una constelación (Cruz del Sur)", "Un instrumento musical", "Un plato típico"],
+                    correctAnswerIndex: 1,
+                    explanation: "La Chakana es un símbolo ancestral andino, la Cruz del Sur."
+                },
+                {
+                    question: "¿Cómo se dice 'comer' en Quechua?",
+                    options: ["Ukyay", "Pukllay", "Mikuy", "Puriy"],
+                    correctAnswerIndex: 2,
+                    explanation: "Mikuy es el verbo 'comer' en Quechua."
+                },
+                {
+                    question: "¿Cuál es la palabra Aymara para 'estrella'?",
+                    options: ["Quyllur", "Warawara", "Illapa", "Killa"],
+                    correctAnswerIndex: 1,
+                    explanation: "Warawara es la palabra Aymara para 'estrella'."
+                },
+                {
+                    question: "¿Qué significa 'Pachamama' en Quechua?",
+                    options: ["Madre Luna", "Madre Agua", "Madre Tierra", "Madre Sol"],
+                    correctAnswerIndex: 2,
+                    explanation: "Pachamama es la deidad andina de la fertilidad, la Madre Tierra."
+                }
+            ];
+
+            const quizLoadingTips = [
+                "¡Conoce las raíces de nuestra tierra!",
+                "Cada pregunta es un paso hacia el conocimiento.",
+                "Descubre la riqueza de Quechua y Aymara.",
+                "No te rindas, el aprendizaje es un viaje.",
+                "¡Prepárate para un desafío cultural!",
+                "La diversidad lingüística es un tesoro.",
+                "Sumérgete en la sabiduría ancestral andina.",
+                "El quechua y el aymara son lenguas vivas.",
+                "Aprender es crecer, ¡diviértete!",
+                "Un idioma es una ventana a una cultura."
+            ];
+
+            // --- Variables y Preguntas del Word Weaver Game ---
+            let currentWordWeaverIndex = 0;
+            let wordWeaverScore = 0;
+            let currentWovenWordParts = []; // Almacena las partes que el usuario ha seleccionado
+
+            // FIX: Changed const to let for wordWeaverQuestions to allow reassignment in resetWordWeaver
+            let wordWeaverQuestions = [
+                {
+                    spanishWord: "Sol",
+                    translation: "Inti",
+                    shuffledParts: ["ti", "In"], // Quechua
+                    explanation: "Inti es el término quechua para 'Sol'."
+                },
+                {
+                    spanishWord: "Luna",
+                    translation: "Killa",
+                    shuffledParts: ["lla", "Ki"], // Quechua
+                    explanation: "Killa es la palabra quechua para 'Luna'."
+                },
+                {
+                    spanishWord: "Agua",
+                    translation: "Uma",
+                    shuffledParts: ["U", "ma"], // Aymara
+                    explanation: "Uma es la palabra aymara para 'Agua'."
+                },
+                {
+                    spanishWord: "Corazón",
+                    translation: "Sunqu",
+                    shuffledParts: ["qu", "Sun"], // Quechua
+                    explanation: "Sunqu es la palabra quechua para 'Corazón'."
+                },
+                {
+                    spanishWord: "Casa",
+                    translation: "Uta",
+                    shuffledParts: ["ta", "U"], // Aymara
+                    explanation: "Uta es la palabra aymara para 'Casa'."
+                },
+                {
+                    spanishWord: "Montaña",
+                    translation: "Urqu",
+                    shuffledParts: ["Ur", "qu"], // Quechua
+                    explanation: "Urqu es el término quechua para 'Montaña'."
+                },
+                {
+                    spanishWord: "Tierra",
+                    translation: "Allpa",
+                    shuffledParts: ["pa", "All"], // Quechua
+                    explanation: "Allpa es la palabra quechua para 'Tierra'."
+                },
+                {
+                    spanishWord: "Estrella",
+                    translation: "Warawara",
+                    shuffledParts: ["wa", "ra", "Wa", "ra"], // Aymara
+                    explanation: "Warawara es la palabra aymara para 'Estrella'."
+                },
+                {
+                    spanishWord: "Grande",
+                    translation: "Jach'a",
+                    shuffledParts: ["ch'a", "Ja"], // Aymara
+                    explanation: "Jach'a significa 'Grande' en Aymara."
+                },
+                {
+                    spanishWord: "Niño",
+                    translation: "Wawa",
+                    shuffledParts: ["wa", "Wa"], // Quechua
+                    explanation: "Wawa es la palabra quechua para 'Niño' o 'Bebé'."
+                }
+            ];
+
+            const wordWeaverLoadingTips = [
+                "¡Teje el conocimiento con cada sílaba!",
+                "Descifra los secretos de las lenguas andinas.",
+                "Cada hilo cuenta una historia, cada sílaba una palabra.",
+                "Conecta las partes y forma el significado.",
+                "La paciencia es clave para el tejedor de palabras."
+            ];
+
+
+            const minigameDetails = {
+                "Responder preguntas": {
+                    description: "Pon a prueba tus conocimientos sobre los idiomas Quechua y Aymara. Responde correctamente para ganar puntos.",
+                    objective: "Responde 20 preguntas de opción múltiple. Al final, obtendrás una calificación basada en tu rendimiento."
+                },
+                "El Tejedor de Palabras": {
+                    description: "Se te presentará una palabra en español y un conjunto de sílabas desordenadas en Quechua o Aymara. Tu misión es seleccionar las sílabas en el orden correcto para formar la traducción.",
+                    objective: "Forma la palabra correcta en Quechua o Aymara para cada traducción. Recibirás una puntuación al final."
+                }
+            };
+
+
+            // --- Funciones de Dibujo ---
+            function drawLogoLoading(currentProgress) {
+                logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
+                if (!logoImage.complete || logoImage.naturalWidth === 0) {
+                    logoCtx.fillStyle = '#f0f0f0'; logoCtx.beginPath(); logoCtx.arc(logoCanvas.width / 2, logoCanvas.height / 2, logoCanvas.width / 2 - 4, 0, Math.PI * 2); logoCtx.fill();
+                    logoCtx.fillStyle = '#333'; logoCtx.font = 'bold 20px Inter'; logoCtx.textAlign = 'center'; logoCtx.textBaseline = 'middle'; logoCtx.fillText('Logo', logoCanvas.width / 2, logoCanvas.height / 2);
+                    return;
+                }
+                logoCtx.save(); logoCtx.beginPath(); logoCtx.arc(logoCanvas.width / 2, logoCanvas.height / 2, logoCanvas.width / 2, 0, Math.PI * 2); logoCtx.clip();
+                logoCtx.drawImage(logoImage, 0, 0, logoCanvas.width, logoCanvas.height);
+                const unfilledHeight = logoCanvas.height * (1 - (currentProgress / 100));
+                logoCtx.fillStyle = '#212121'; logoCtx.fillRect(0, 0, logoCanvas.width, unfilledHeight);
+                logoCtx.restore();
+            }
+
+            function resizeCanvas() {
+                const computedLogoStyle = getComputedStyle(logoCanvas);
+                const logoWidth = parseFloat(computedLogoStyle.width);
+                const logoHeight = parseFloat(computedLogoStyle.height);
+                logoCanvas.width = logoWidth; logoCanvas.height = logoHeight;
+                logoRadius = logoWidth / 2;
+                const spectrumCanvasDiameter = logoWidth + (2 * spectrumMargin) + (2 * maxBarHeight);
+                spectrumCanvas.width = spectrumCanvasDiameter; spectrumCanvas.height = spectrumCanvasDiameter;
+                drawLogoLoading(progress);
+                drawSpectrum();
+            }
+
+            function drawSpectrum() {
+                ctx.clearRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
+                const centerX = spectrumCanvas.width / 2;
+                const centerY = spectrumCanvas.height / 2;
+                const baseRadius = logoRadius + spectrumMargin;
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)'; ctx.lineWidth = 2;
+                for (let i = 0; i < barCount; i++) {
+                    audioData[i] = Math.max(0, Math.min(255, audioData[i] + (Math.random() - 0.5) * 30));
+                    const barHeight = (audioData[i] / 255) * maxBarHeight;
+                    const angle = (i / barCount) * Math.PI * 2;
+                    const startX = centerX + baseRadius * Math.cos(angle);
+                    const startY = centerY + baseRadius * Math.sin(angle);
+                    const endX = centerX + (baseRadius + barHeight) * Math.cos(angle);
+                    const endY = centerY + (baseRadius + barHeight) * Math.sin(angle);
+                    ctx.beginPath(); ctx.moveTo(startX, startY); ctx.lineTo(endX, endY); ctx.stroke();
+                }
+                requestAnimationFrame(drawSpectrum);
+            }
+
+            function updateProgress() {
+                if (progress < 100) {
+                    progress++;
+                    loadingPercentage.textContent = `${progress}%`;
+                    drawLogoLoading(progress);
+
+                    if (progress < 30) {
+                        loadingTexturesText.classList.remove('active');
+                        loadingSoundsText.classList.remove('active');
+                    } else if (progress >= 30 && progress < 65) {
+                        loadingTexturesText.classList.add('active');
+                        loadingSoundsText.classList.remove('active');
+                    } else {
+                        loadingTexturesText.classList.remove('active');
+                        loadingSoundsText.classList.add('active');
+                    }
+                    setTimeout(updateProgress, initialIntervalTime); // Use initialIntervalTime here
+                } else {
+                    backgroundMusic.pause();
+                    backgroundMusic.currentTime = 0;
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingScreen.classList.add('hidden');
+                        showMenu(mainMenu, mainMenu.querySelectorAll('.menu-button'));
+                    }, 1000);
+                }
+            }
+
+            // --- Inicialización y Event Listeners Generales ---
+
+            logoImage.onerror = () => {
+                console.error("No se pudo cargar el logo. Asegúrate de que la URL sea correcta y accesible.");
+                drawLogoLoading(progress);
+            };
+
+            allowSoundButton.addEventListener('click', () => {
+                consentModal.classList.add('hidden');
+                loadingScreen.classList.remove('hidden');
+                console.log("Intentando reproducir música de carga desde:", backgroundMusic.src);
+                backgroundMusic.play().catch(error => {
+                    console.error("Error al reproducir la música de carga:", error);
+                });
+                logoImage.onload = () => {
+                    resizeCanvas();
+                    drawLogoLoading(progress);
+                    drawSpectrum();
+                };
+                if (logoImage.complete) {
+                    resizeCanvas();
+                    drawLogoLoading(progress);
+                    drawSpectrum();
+                }
+                updateProgress();
+            });
+
+            youtubeButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.open(youtubeButton.href, '_blank');
+            });
+
+            facebookButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.open(facebookButton.href, '_blank');
+            });
+
+            window.addEventListener('resize', resizeCanvas);
+
+            // --- Lógica de Navegación entre Menús ---
+
+            function showMenu(menuToShow, elementsToAnimate) {
+                // Control de la música al cambiar de menú
+                const isMinigameLoadingOrInfoScreen = (menuToShow === minigameLoadingScreen || menuToShow === minigameInfoScreen);
+                const isQuizGameScreen = (menuToShow === quizGame); // Specific for quiz game music
+                const isWordWeaverGameScreen = (menuToShow === wordWeaverGame); // Specific for word weaver game music
+
+                if (isMinigameLoadingOrInfoScreen) {
+                    // If going to minigame loading or info screen, pause menu music and play minigame briefing music
+                    menuMusic.pause();
+                    menuMusic.currentTime = 0;
+                    quizGameMusic.pause(); // Ensure quiz music is paused
+                    quizGameMusic.currentTime = 0;
+                    wordWeaverGameMusic.pause(); // Ensure word weaver music is paused
+                    wordWeaverGameMusic.currentTime = 0;
+                    minigameBriefingMusic.play().catch(error => console.error("Error al reproducir música de minijuego:", error));
+                } else if (isQuizGameScreen) {
+                    // If going to the actual Quiz Game
+                    menuMusic.pause();
+                    menuMusic.currentTime = 0;
+                    minigameBriefingMusic.pause();
+                    minigameBriefingMusic.currentTime = 0;
+                    wordWeaverGameMusic.pause(); // Ensure word weaver music is paused
+                    wordWeaverGameMusic.currentTime = 0;
+                    quizGameMusic.play().catch(error => console.error("Error al reproducir música del Quiz Game:", error));
+                } else if (isWordWeaverGameScreen) {
+                    // If going to the actual Word Weaver Game
+                    menuMusic.pause();
+                    menuMusic.currentTime = 0;
+                    minigameBriefingMusic.pause();
+                    minigameBriefingMusic.currentTime = 0;
+                    quizGameMusic.pause(); // Ensure quiz music is paused
+                    quizGameMusic.currentTime = 0;
+                    wordWeaverGameMusic.play().catch(error => console.error("Error al reproducir música del Tejedor de Palabras:", error));
+                }
+                else {
+                    // If going to main menu or any other submenu (config, profile, premium, credits, minigames menu)
+                    minigameBriefingMusic.pause();
+                    minigameBriefingMusic.currentTime = 0;
+                    quizGameMusic.pause(); // Ensure quiz music is paused
+                    quizGameMusic.currentTime = 0;
+                    wordWeaverGameMusic.pause(); // Ensure word weaver music is paused
+                    wordWeaverGameMusic.currentTime = 0;
+                    menuMusic.play().catch(error => console.error("Error al reproducir música del menú:", error));
+                }
+
+                // Oculta todos los menús
+                mainMenu.classList.add('hidden');
+                configMenu.classList.add('hidden');
+                profileMenu.classList.add('hidden');
+                premiumMenu.classList.add('hidden');
+                creditsMenu.classList.add('hidden');
+                minigamesMenu.classList.add('hidden');
+                quizGame.classList.add('hidden');
+                minigameLoadingScreen.classList.add('hidden');
+                minigameInfoScreen.classList.add('hidden');
+                wordWeaverGame.classList.add('hidden');
+
+
+                // Muestra el menú deseado
+                menuToShow.classList.remove('hidden');
+                menuToShow.classList.add('active');
+
+                // Aplica animación escalonada a los elementos del menú
+                if (elementsToAnimate) {
+                    elementsToAnimate.forEach((element, index) => {
+                        element.style.animation = `button-slide-in 0.6s ease-out ${0.1 * index}s forwards`;
+                    });
+                }
+            }
+
+            // --- Event Listeners del Menú Principal ---
+            playButton.addEventListener('click', () => {
+                const minigameButtons = minigamesMenu.querySelectorAll('.minigame-button');
+                showMenu(minigamesMenu, minigameButtons);
+            });
+
+            configButton.addEventListener('click', () => {
+                const configControls = configMenu.querySelectorAll('.config-control-group, .config-button');
+                showMenu(configMenu, configControls);
+                volumeSlider.value = menuMusic.volume;
+            });
+
+            profileButton.addEventListener('click', () => {
+                const profileControls = profileMenu.querySelectorAll('.profile-control-group, .profile-button');
+                showMenu(profileMenu, profileControls);
+                loadProfileData();
+            });
+
+            premiumButton.addEventListener('click', () => {
+                const premiumControls = premiumMenu.querySelectorAll('.premium-message, .premium-button');
+                showMenu(premiumMenu, premiumControls);
+            });
+
+            creditsButton.addEventListener('click', () => {
+                const creditsControls = creditsMenu.querySelectorAll('.credits-text, .credits-button');
+                showMenu(creditsMenu, creditsControls);
+            });
+
+            // --- Event Listeners para Volver al Menú Principal / Minijuegos ---
+            backToMainFromConfigButton.addEventListener('click', () => showMenu(mainMenu, mainMenu.querySelectorAll('.menu-button')));
+            backToMainFromProfileButton.addEventListener('click', () => showMenu(mainMenu, mainMenu.querySelectorAll('.menu-button')));
+            backToMainFromPremiumButton.addEventListener('click', () => showMenu(mainMenu, mainMenu.querySelectorAll('.menu-button')));
+            backToMainFromCreditsButton.addEventListener('click', () => showMenu(mainMenu, mainMenu.querySelectorAll('.menu-button')));
+            
+            // Volver de Minijuegos al Menú Principal
+            backToMainFromMinigamesButton.addEventListener('click', () => {
+                showMenu(mainMenu, mainMenu.querySelectorAll('.menu-button'));
+            });
+
+            // Volver de Info a Minijuegos
+            backToMinigamesFromInfoButton.addEventListener('click', () => {
+                showMenu(minigamesMenu, minigamesMenu.querySelectorAll('.minigame-button'));
+            });
+
+            // Volver de Quiz a Minijuegos
+            backToMinigamesFromQuizButton.addEventListener('click', () => {
+                showMenu(minigamesMenu, minigamesMenu.querySelectorAll('.minigame-button'));
+            });
+
+            // Volver de Word Weaver a Minijuegos
+            backToMinigamesFromWordWeaverButton.addEventListener('click', () => {
+                showMenu(minigamesMenu, minigamesMenu.querySelectorAll('.minigame-button'));
+            });
+
+
+            // --- Controles de Configuración ---
+            volumeSlider.addEventListener('input', (e) => {
+                backgroundMusic.volume = e.target.value;
+                menuMusic.volume = e.target.value;
+                minigameBriefingMusic.volume = e.target.value;
+                quizGameMusic.volume = e.target.value;
+                wordWeaverGameMusic.volume = e.target.value; // Controla el volumen de la música del Tejedor de Palabras
+            });
+            effectsToggle.addEventListener('change', (e) => {
+                effectsEnabled = e.target.checked;
+                console.log('Efectos activados:', effectsEnabled);
+            });
+
+            // --- Controles de Perfil ---
+            uploadImageButton.addEventListener('click', () => {
+                profileImageInput.click();
+            });
+            profileImageInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        profilePic.src = e.target.result;
+                        localStorage.setItem('profilePic', e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            profileNameInput.addEventListener('input', (e) => {
+                localStorage.setItem('profileName', e.target.value);
+            });
+            function loadProfileData() {
+                const savedProfilePic = localStorage.getItem('profilePic');
+                if (savedProfilePic) {
+                    profilePic.src = savedProfilePic;
+                } else {
+                    profilePic.src = "https://placehold.co/120x120/444444/FFFFFF?text=Tu+Foto";
+                }
+                const savedProfileName = localStorage.getItem('profileName');
+                if (savedProfileName) {
+                    profileNameInput.value = savedProfileName;
+                } else {
+                    profileNameInput.value = "";
+                }
+            }
+
+            // --- Lógica de Carga/Info del Minijuego (Generalizado) ---
+            function loadMinigame(gameName, gameId, loadingTips, gameDetails) {
+                minigameLoadingTitle.textContent = gameName;
+                minigameLoadingTip.textContent = loadingTips[Math.floor(Math.random() * loadingTips.length)];
+                
+                // Show the loading screen, and animate its specific elements
+                const loadingElementsToAnimate = minigameLoadingScreen.querySelectorAll('h2, .loading-spinner, p');
+                showMenu(minigameLoadingScreen, loadingElementsToAnimate); 
+
+                // Simulate loading time
+                setTimeout(() => {
+                    minigameInfoTitle.textContent = gameName;
+                    infoDescriptionText.textContent = gameDetails.description;
+                    infoObjectiveText.textContent = gameDetails.objective;
+                    
+                    // Animate the specific elements of the info screen
+                    const infoElementsToAnimate = minigameInfoScreen.querySelectorAll('h2, .info-description, .info-objective, .info-button');
+                    showMenu(minigameInfoScreen, infoElementsToAnimate);
+
+                    // Store the game ID to know which game to start from the info screen
+                    startGameFromInfoButton.dataset.gameId = gameId; 
+                }, minigameLoadingDuration); // Use the dedicated minigame loading duration
+            }
+
+            // --- Event Listeners para Iniciar Minijuegos ---
+            startQuizButton.addEventListener('click', () => {
+                loadMinigame("Responder preguntas", "quiz", quizLoadingTips, minigameDetails["Responder preguntas"]);
+            });
+
+            startWordWeaverButton.addEventListener('click', () => {
+                loadMinigame("El Tejedor de Palabras", "word-weaver", wordWeaverLoadingTips, minigameDetails["El Tejedor de Palabras"]);
+            });
+
+            startGameFromInfoButton.addEventListener('click', () => {
+                const gameId = startGameFromInfoButton.dataset.gameId;
+                if (gameId === "quiz") {
+                    // showMenu will handle music and hiding other screens
+                    showMenu(quizGame); 
+                    resetQuiz();
+                    displayQuestion();
+                } else if (gameId === "word-weaver") {
+                    // showMenu will handle music and hiding other screens
+                    showMenu(wordWeaverGame);
+                    resetWordWeaver();
+                    displayWordWeaverQuestion();
+                }
+            });
+
+
+            // --- Lógica del Quiz Game ---
+            quizNextButton.addEventListener('click', () => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < quizQuestions.length) {
+                    displayQuestion();
+                } else {
+                    displayFinalScore();
+                }
+            });
+
+            quizRestartButton.addEventListener('click', () => {
+                resetQuiz();
+                displayQuestion();
+            });
+
+            function displayQuestion() {
+                const questionData = quizQuestions[currentQuestionIndex];
+                quizQuestionElement.textContent = `${currentQuestionIndex + 1}/${quizQuestions.length}. ${questionData.question}`;
+                quizOptionsElement.innerHTML = '';
+                quizFeedbackElement.textContent = '';
+                quizNextButton.classList.add('hidden');
+                quizScoreDisplay.classList.add('hidden');
+                quizRestartButton.classList.add('hidden');
+                quizScoreDisplay.classList.remove('grade-AD', 'grade-A', 'grade-B', 'grade-C');
+
+                questionData.options.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.classList.add('quiz-option-button', 'menu-button');
+                    button.style.animation = `button-slide-in 0.6s ease-out ${0.1 * index}s forwards`;
+                    button.onclick = () => checkAnswer(index);
+                    quizOptionsElement.appendChild(button);
+                });
+
+                // Animate the quiz container and question
+                const quizContainer = document.querySelector('#quiz-game .quiz-container');
+                quizContainer.style.animation = `menu-fade-in 0.8s ease-out forwards`;
+                
+                quizQuestionElement.style.animation = `button-slide-in 0.6s ease-out 0.1s forwards`;
+                
+                // Ensure the back button is visible and not animated by the staggered animation
+                backToMinigamesFromQuizButton.style.opacity = 1;
+                backToMinigamesFromQuizButton.style.animation = 'none';
+            }
+
+            function checkAnswer(selectedIndex) {
+                const questionData = quizQuestions[currentQuestionIndex];
+                const allOptionButtons = quizOptionsElement.querySelectorAll('.quiz-option-button');
+
+                allOptionButtons.forEach(button => {
+                    button.disabled = true;
+                    button.style.cursor = 'default';
+                    // Remove general button styles to stop hover effects and border gradients after selection
+                    button.classList.remove('menu-button'); 
+                    button.style.borderImage = 'none'; // Explicitly remove border image
+                });
+
+                if (selectedIndex === questionData.correctAnswerIndex) {
+                    score++;
+                    quizFeedbackElement.textContent = "¡Correcto!";
+                    quizFeedbackElement.classList.remove('incorrect');
+                    quizFeedbackElement.classList.add('correct');
+                    allOptionButtons[selectedIndex].style.backgroundColor = '#4CAF50'; // Green for correct
+                } else {
+                    quizFeedbackElement.textContent = `Incorrecto. La respuesta correcta era: ${questionData.options[questionData.correctAnswerIndex]}. ${questionData.explanation}`;
+                    quizFeedbackElement.classList.remove('correct');
+                    quizFeedbackElement.classList.add('incorrect');
+                    allOptionButtons[selectedIndex].style.backgroundColor = '#FF6347'; // Red for incorrect
+                    // Also highlight the correct answer in green
+                    allOptionButtons[questionData.correctAnswerIndex].style.backgroundColor = '#4CAF50'; 
+                }
+                quizNextButton.classList.remove('hidden');
+                quizNextButton.style.animation = `button-slide-in 0.6s ease-out 0s forwards`;
+            }
+
+            function displayFinalScore() {
+                quizQuestionElement.textContent = "¡Quiz Terminado!";
+                quizOptionsElement.innerHTML = '';
+                quizFeedbackElement.textContent = '';
+                quizNextButton.classList.add('hidden');
+
+                const percentage = (score / quizQuestions.length) * 100;
+                let grade = '';
+                let gradeClass = '';
+
+                if (percentage >= 90) {
+                    grade = 'AD (Sobresaliente)';
+                    gradeClass = 'grade-AD';
+                } else if (percentage >= 75) {
+                    grade = 'A (Notable)';
+                    gradeClass = 'grade-A';
+                } else if (percentage >= 50) {
+                    grade = 'B (Aprobado)';
+                    gradeClass = 'grade-B';
+                } else {
+                    grade = 'C (Desaprobado)';
+                    gradeClass = 'grade-C';
+                }
+
+                quizScoreDisplay.textContent = `Tu puntuación final: ${score} de ${quizQuestions.length} (${percentage.toFixed(0)}%) - Calificación: ${grade}`;
+                quizScoreDisplay.classList.add(gradeClass);
+                quizScoreDisplay.classList.remove('hidden');
+                quizRestartButton.classList.remove('hidden');
+                quizRestartButton.style.animation = `button-slide-in 0.6s ease-out 0s forwards`;
+
+                quizScoreDisplay.style.animation = `title-pop-in 1s ease-out forwards`;
+            }
+
+            function resetQuiz() {
+                currentQuestionIndex = 0;
+                score = 0;
+                quizQuestions = shuffleArray(quizQuestions);
+                quizScoreDisplay.classList.add('hidden');
+                quizRestartButton.classList.add('hidden');
+                quizNextButton.classList.add('hidden');
+                quizFeedbackElement.textContent = '';
+            }
+
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+            // --- Lógica del Word Weaver Game ---
+            wordWeaverClearButton.addEventListener('click', clearWovenWord);
+            wordWeaverCheckButton.addEventListener('click', checkWovenWord);
+            wordWeaverNextButton.addEventListener('click', () => {
+                currentWordWeaverIndex++;
+                if (currentWordWeaverIndex < wordWeaverQuestions.length) {
+                    displayWordWeaverQuestion();
+                } else {
+                    displayWordWeaverFinalScore();
+                }
+            });
+            wordWeaverRestartButton.addEventListener('click', () => {
+                resetWordWeaver();
+                displayWordWeaverQuestion();
+            });
+
+            function displayWordWeaverQuestion() {
+                const questionData = wordWeaverQuestions[currentWordWeaverIndex];
+                wordWeaverSpanishWord.textContent = `Traduce: "${questionData.spanishWord}"`;
+                wordPartsContainer.innerHTML = '';
+                wovenWordDisplay.textContent = '';
+                wordWeaverFeedback.textContent = '';
+                wordWeaverNextButton.classList.add('hidden');
+                wordWeaverScoreDisplay.classList.add('hidden');
+                wordWeaverRestartButton.classList.add('hidden');
+                wordWeaverScoreDisplay.classList.remove('grade-AD', 'grade-A', 'grade-B', 'grade-C');
+                currentWovenWordParts = []; // Reiniciar la palabra tejida
+
+                // Mezclar las partes de la palabra para que el usuario las ordene
+                const shuffledParts = shuffleArray([...questionData.shuffledParts]);
+
+                shuffledParts.forEach((part, index) => {
+                    const button = document.createElement('button');
+                    button.textContent = part;
+                    button.classList.add('word-part-button', 'menu-button'); // Reutilizar estilos
+                    button.style.animation = `button-slide-in 0.6s ease-out ${0.1 * index}s forwards`;
+                    button.onclick = () => addPartToWovenWord(button, part);
+                    wordPartsContainer.appendChild(button);
+                });
+
+                // Animate the word weaver container and question
+                const wordWeaverContainer = document.querySelector('#word-weaver-game .word-weaver-container');
+                wordWeaverContainer.style.animation = `menu-fade-in 0.8s ease-out forwards`;
+
+                wordWeaverSpanishWord.style.animation = `button-slide-in 0.6s ease-out 0.1s forwards`;
+
+                // Activar botones de control
+                wordWeaverClearButton.classList.remove('hidden');
+                wordWeaverClearButton.style.animation = `button-slide-in 0.6s ease-out 0s forwards`;
+                wordWeaverCheckButton.classList.remove('hidden');
+                wordWeaverCheckButton.style.animation = `button-slide-in 0.6s ease-out 0.1s forwards`;
+
+                // Asegurar que el botón de volver esté siempre visible
+                backToMinigamesFromWordWeaverButton.style.opacity = 1;
+                backToMinigamesFromWordWeaverButton.style.animation = 'none';
+            }
+
+            function addPartToWovenWord(button, part) {
+                currentWovenWordParts.push(part);
+                wovenWordDisplay.textContent = currentWovenWordParts.join('');
+                button.classList.add('selected'); // Marcar como seleccionado
+                button.disabled = true; // Deshabilitar el botón para que no se pueda seleccionar de nuevo
+            }
+
+            function clearWovenWord() {
+                currentWovenWordParts = [];
+                wovenWordDisplay.textContent = '';
+                wordWeaverFeedback.textContent = '';
+                // Habilitar y desmarcar todos los botones de partes
+                wordPartsContainer.querySelectorAll('.word-part-button').forEach(button => {
+                    button.classList.remove('selected');
+                    button.disabled = false;
+                    button.classList.add('menu-button'); // Restaurar estilos de hover
+                });
+            }
+
+            function checkWovenWord() {
+                const userAnswer = currentWovenWordParts.join('');
+                const questionData = wordWeaverQuestions[currentWordWeaverIndex];
+
+                // Deshabilitar todos los botones de partes después de comprobar
+                wordPartsContainer.querySelectorAll('.word-part-button').forEach(button => {
+                    button.disabled = true;
+                    button.style.cursor = 'default';
+                    button.classList.remove('menu-button'); // Remove general button styles
+                    button.style.borderImage = 'none'; // Explicitly remove border image
+                });
+
+                if (userAnswer.toLowerCase() === questionData.translation.toLowerCase()) {
+                    wordWeaverScore++;
+                    wordWeaverFeedback.textContent = "¡Correcto!";
+                    wordWeaverFeedback.classList.remove('incorrect');
+                    wordWeaverFeedback.classList.add('correct');
+                } else {
+                    wordWeaverFeedback.textContent = `Incorrecto. La respuesta correcta era: "${questionData.translation}". ${questionData.explanation}`;
+                    wordWeaverFeedback.classList.remove('correct');
+                    wordWeaverFeedback.classList.add('incorrect');
+                }
+                wordWeaverNextButton.classList.remove('hidden');
+                wordWeaverNextButton.style.animation = `button-slide-in 0.6s ease-out 0s forwards`;
+            }
+
+            function displayWordWeaverFinalScore() {
+                wordWeaverSpanishWord.textContent = "¡Juego Terminado!";
+                wordPartsContainer.innerHTML = '';
+                wovenWordDisplay.textContent = '';
+                wordWeaverFeedback.textContent = '';
+                wordWeaverNextButton.classList.add('hidden');
+                wordWeaverClearButton.classList.add('hidden');
+                wordWeaverCheckButton.classList.add('hidden');
+
+                const percentage = (wordWeaverScore / wordWeaverQuestions.length) * 100;
+                let grade = '';
+                let gradeClass = '';
+
+                if (percentage >= 90) {
+                    grade = 'AD (Sobresaliente)';
+                    gradeClass = 'grade-AD';
+                } else if (percentage >= 75) {
+                    grade = 'A (Notable)';
+                    gradeClass = 'grade-A';
+                } else if (percentage >= 50) {
+                    grade = 'B (Aprobado)';
+                    gradeClass = 'grade-B';
+                } else {
+                    grade = 'C (Desaprobado)';
+                    gradeClass = 'grade-C';
+                }
+
+                wordWeaverScoreDisplay.textContent = `Tu puntuación final: ${wordWeaverScore} de ${wordWeaverQuestions.length} (${percentage.toFixed(0)}%) - Calificación: ${grade}`;
+                wordWeaverScoreDisplay.classList.add(gradeClass);
+                wordWeaverScoreDisplay.classList.remove('hidden');
+                wordWeaverRestartButton.classList.remove('hidden');
+                wordWeaverRestartButton.style.animation = `button-slide-in 0.6s ease-out 0s forwards`;
+
+                wordWeaverScoreDisplay.style.animation = `title-pop-in 1s ease-out forwards`;
+            }
+
+            function resetWordWeaver() {
+                currentWordWeaverIndex = 0;
+                wordWeaverScore = 0;
+                wordWeaverQuestions = shuffleArray(wordWeaverQuestions); // Mezclar preguntas
+                currentWovenWordParts = [];
+                wordWeaverScoreDisplay.classList.add('hidden');
+                wordWeaverRestartButton.classList.add('hidden');
+                wordWeaverNextButton.classList.add('hidden');
+                wordWeaverClearButton.classList.remove('hidden');
+                wordWeaverCheckButton.classList.remove('hidden');
+                wordWeaverFeedback.textContent = '';
+            }
+
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+        });
+    </script>
+</body>
+</html>
